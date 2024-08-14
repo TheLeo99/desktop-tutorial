@@ -47,14 +47,14 @@ class House:
 
     def __radd__(self, other):
         if isinstance(other, int):
-            other += self.number_of_floors
-            return self.number_of_floors
+            self.number_of_floors += other
+            return self
         return False
 
     def __iadd__(self, other):
         if isinstance(other, int):
             self.number_of_floors += other
-            return self.number_of_floors
+            return self
         return False
 
 
