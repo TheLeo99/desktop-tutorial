@@ -8,6 +8,9 @@ class User:
         self.password = self.hash_password(password)  # хэширование пароля
         self.age = age
 
+    def __str__(self):
+        return self.nickname
+
     @staticmethod
     def hash_password(password):
         # применяется sha256 (криптографическая хэш-функция)
