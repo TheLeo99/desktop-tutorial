@@ -8,13 +8,14 @@ class User:
         self.password = self.hash_password(password)  # хэширование пароля
         self.age = age
 
-    def hash_password(self, password):
+    @staticmethod
+    def hash_password(password):
         # применяется sha256 (криптографическая хэш-функция)
         return int(hashlib.sha256(password.encode()).hexdigest(), 16)  # преобразование в целое число
 
 
 class Video:
-    def __init__(self, title, duration, adult_mode = False):
+    def __init__(self, title, duration, adult_mode=False):
         self.title = title
         self.duration = duration
         self.time_now = 0  # по умолчанию видео остановлено
@@ -22,12 +23,13 @@ class Video:
 
     def play(self):
         if self.time_now < self.duration:
-            self.time_now = 0
+            print(f"Проигрывается видео '{self.title}'")
         else:
             print(f"Видео '{self.title}' уже завершено.")
 
     def stop(self):
         self.time_now = 0
+
 
 class UrTube:
     def __init__(self):
@@ -37,7 +39,7 @@ class UrTube:
 
     def log_in(self, nickname, password):
         for user in self.users:
-            if user.nickname == nickname and user.password == User.hash_password(user, password):
+            if user.nickname == nickname and user.password == User.hash_password(password):
                 self.current_user = user
                 return True
         print(f"Неправильный логин или пароль для пользователя '{nickname}'.")
@@ -50,7 +52,10 @@ class UrTube:
                 return
         new_user = User(nickname, password, age)
         self.users.append(new_user)
-        self.log_in(nickname, password)
+        if self.log_in(nickname, password):
+            print(f"Пользователь '{nickname}' успешно зарегистрирован и вошел в систему.")
+        else:
+            print(f"Ошибка при входе в систему для пользователя '{nickname}'.")
 
     def log_out(self):
         self.current_user = None
