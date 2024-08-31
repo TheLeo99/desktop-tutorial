@@ -26,7 +26,7 @@ class Figure:
         return len(new_sides) == self.sides_count and all(isinstance(side, int) and side > 0 for side in new_sides)
 
     def get_sides(self):
-        self.__sides
+        return self.__sides
 
     def __len__(self):
             return sum(self.__sides)
@@ -40,7 +40,10 @@ class Circle(Figure):
 
     def __init__(self, color, *sides):
         super().__init__(color, *sides)  # Вызов конструктора базового класса перед инициализацией __sides
-        self.__sides = [1] * self.sides_count if len(sides) != self.sides_count else list(sides)
+        if len(sides) != self.sides_count:
+            self.set_sides(1) # Устанавливаем значение по умолчанию, если не задано
+        else:
+            self.set_sides(*sides)  # Устанавливаем значение, если оно задано
 
     def get_radius(self):
         return self.get_sides()[0] / (2 * math.pi)
@@ -50,7 +53,7 @@ class Circle(Figure):
             self.set_sides(new_radius * 2 * math.pi)
 
     def get_sides(self):
-        return self.__sides
+        return self._Figure__sides
 
     def __len__(self):
         return int(self.get_sides()[0])  # Возвращает длину окружности
@@ -64,8 +67,8 @@ class Triangle(Figure):
         super().__init__(color, *sides)
 
     def get_square(self):
-        s = sum(self.__sides) / 2
-        return math.sqrt(s * (s - self.__sides[0]) * (s - self.__sides[1]) * (s - self.__sides[2]))
+        s = sum(self.get_sides()) / 2 # Используем self.get_sides() для получения сторон
+        return math.sqrt(s * (s - self.get_sides()[0]) * (s - self.get_sides()[1]) * (s - self.get_sides()[2]))
 
 class Cube(Figure):
     sides_count = 12
@@ -73,11 +76,11 @@ class Cube(Figure):
     def __init__(self, color, *sides):
         super().__init__(color, *sides)
         if len(sides) == 1:
-            self.__sides = [sides[0]] * self.sides_count
+            self.set_sides(*sides)  # Используем set_sides для установки начальных сторон
         else:
-            self.__sides = [1] * self.sides_count
+            self.set_sides(*[1] * self.sides_count)
     def get_volume(self):
-       return self.__sides[0]**3
+       return self.get_sides()[0]**3
 
 circle1 = Circle((200, 200, 100), 10) # (Цвет, стороны)
 cube1 = Cube((222, 35, 130), 6)
