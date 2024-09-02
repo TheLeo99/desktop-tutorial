@@ -41,9 +41,7 @@ class Circle(Figure):
     def __init__(self, color, *sides):
         super().__init__(color, *sides)  # Вызов конструктора базового класса перед инициализацией __sides
         if len(sides) != self.sides_count:
-            self.set_sides(1) # Устанавливаем значение по умолчанию, если не задано
-        else:
-            self.set_sides(*sides)  # Устанавливаем значение, если оно задано
+            self.set_sides(2 * math.pi)  # Устанавливаем значение по умолчанию, если не задано
 
     def get_radius(self):
         return self.get_sides()[0] / (2 * math.pi)
@@ -67,18 +65,21 @@ class Triangle(Figure):
         super().__init__(color, *sides)
 
     def get_square(self):
-        s = sum(self.get_sides()) / 2 # Используем self.get_sides() для получения сторон
-        return math.sqrt(s * (s - self.get_sides()[0]) * (s - self.get_sides()[1]) * (s - self.get_sides()[2]))
+        sides = self.get_sides()
+        s = sum(sides) / 2 # Используем список sides для получения сторон
+        return math.sqrt(s * (s - sides[0]) * (s - sides[1]) * (s - sides[2]))
 
 class Cube(Figure):
-    sides_count = 12
+    sides_count = 12  # Куб имеет 12 ребер с одинаковой длиной
 
     def __init__(self, color, *sides):
-        super().__init__(color, *sides)
-        if len(sides) == 1:
-            self.set_sides(*sides)  # Используем set_sides для установки начальных сторон
-        else:
-            self.set_sides(*[1] * self.sides_count)
+        if len(sides) != 1:
+            raise ValueError("Куб должен иметь одну длину ребра.")
+        super().__init__(color, *([sides[0]] * self.sides_count))
+
+    def set_sides(self, *new_side):
+        if isinstance(new_side, int) and new_side > 0:
+            self._Figure__sides = [new_side] * self.sides_count
     def get_volume(self):
        return self.get_sides()[0]**3
 
