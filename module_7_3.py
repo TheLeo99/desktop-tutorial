@@ -10,32 +10,30 @@ class WordsFinder:
 
         for file_name in self.file_names:
             with open(file_name, 'r', encoding='utf-8') as f:
+                words_list = []  # Создаем пустой список для файла
                 for line in f:
                     line = line.strip().lower()  # Переводим строку в нижний регистр и удаляем пробелы в начале и конце
                     for char in punctuation:
                         line = line.replace(char, ' ')  # Заменяем пунктуацию на пробелы
                     words = line.split()  # Разбиваем строку на слова
-                    if file_name in all_words:
-                        all_words[file_name].extend(words)  # Добавляем слова в существующий список
-                    else:
-                        all_words[file_name] = words  # Создаем новый список для файла
-
+                    words_list.extend(words)  # Добавляем слова в список файла
+                all_words[file_name] = words_list  # Сохраняем список для файла
         return all_words
 
     def find(self, word):
         result = {}
-        for name, words in self.get_all_words().items():
-            word = word.lower()  # Приводим слово к нижнему регистру перед подсчётом
-            if word in words:
-                result[name] = words.index(word)
-            else:
-                result[name] = -1
+        word = word.lower()  # Приводим слово к нижнему регистру перед подсчётом
+        for name, words in self.all_words.items():
+            for index, w in enumerate(words):
+                if w.lower() == word:
+                    result[name] = index + 1  # Возвращаем порядковый номер (не индекс)
+                    break  # Останавливаем поиск после первого совпадения
         return result
 
     def count(self, word):
         result = {}
-        for name, words in self.get_all_words().items():
-            word = word.lower()  # Приводим слово к нижнему регистру перед подсчётом
+        word = word.lower()  # Приводим слово к нижнему регистру перед подсчётом
+        for name, words in self.all_words.items():
             result[name] = words.count(word)
         return result
 
